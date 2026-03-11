@@ -1,0 +1,15 @@
+Chromosome	ChromStart	ChromEnd	Band	Site
+carmag_ChrX	1	84431156	NA	NA
+carmag_ChrY	1	110633678	NA	NA
+otto_ChrX	1	87408075	NA	NA
+otto_ChrY	1	113917345	NA	NA
+futura_ChrX1	1	86490126	NA	NA
+futura_ChrX2	1	84619625	NA	NA
+uso_ChrX1	1	84824538	NA	NA
+uso_ChrX2	1	84944898	NA	NA
+lupulus_ChrX	1	268239420	NA	NA
+lupulus_ChrY	1	168676604	NA	NA
+lupuloides_ChrX	1	272033281	NA	NA
+lupuloides_ChrY	1	242885770	NA	NA
+neomexicanus_ChrX	1	267359615	NA	NA
+neomexicanus_ChrY	1	246096435	NA	NA
