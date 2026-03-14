@@ -1243,5 +1243,137 @@ ntd <- normTransform(dds)
 plotPCA(vsd, intgroup="Tissue_stage")+ geom_label(aes(label = colData$Sex))
 
 
+############ McDonald Kreitman Test ############
+
+####first run to get the daf and div files
+
+#for f in *.fa; do       
+#python sfsFromFasta_v2.py --multiFasta "$f" --codonTable standard --daf "${f}.daf" --div "${f}.div"
+#done
+
+####then cat the daf files together
+
+#ls *.daf > daf_files.txt
+
+library(iMKT)
+#v0.1.1
+
+library(dplyr)
+#v2.5.0
+
+#### running as a loop on all files
+dafs <- readLines("daf_files.txt")
+mkt_list <- list()
+FWW_list <- list()
+
+for(i in 1:length(dafs)){
+  daf_file <- dafs[i]
+  div_file <- gsub(".daf",".div",daf_file)
+  daf <- try(read.delim(daf_file,
+                        header = T,
+                        stringsAsFactors = F))
+  div <- try(read.delim(div_file,
+                        header = T,
+                        stringsAsFactors = F))
+  
+  mkt_list[[i]] <- try(standardMKT(daf, div))
+  FWW_list[[i]] <- try(FWW(daf, div, listCutoffs = c(0, 0.15)))
+}
+
+
+getP <- function(x){
+  if(!inherits(x,"try-error")){
+    x$Results$`Fishers exact test P-value`[2] %>% return()
+  } else {
+    return(NA)
+  }
+}
+getA <- function(x){
+  if(!inherits(x,"try-error")){
+    x$Results$alpha.symbol[2] %>% return()
+  } else {
+    return(NA)
+  }
+}
+
+getpN <- function(x){
+  if(!inherits(x,"try-error")){
+    x$`MKT tables`$`Cutoff =  0`$Polymorphism[2] %>% return()
+  } else {
+    return(NA)
+  }
+}
+
+getpS <- function(x){
+  if(!inherits(x,"try-error")){
+    x$`MKT tables`$`Cutoff =  0`$Polymorphism[1] %>% return()
+  } else {
+    return(NA)
+  }
+}
+
+getdN <- function(x){
+  if(!inherits(x,"try-error")){
+    x$`MKT tables`$`Cutoff =  0`$Divergence[2] %>% return()
+  } else {
+    return(NA)
+  }
+}
+
+getdS <- function(x){
+  if(!inherits(x,"try-error")){
+    x$`MKT tables`$`Cutoff =  0`$Divergence[1] %>% return()
+  } else {
+    return(NA)
+  }
+}
+
+
+# MK-test
+p_vals <- data.frame(p=mkt_list %>% lapply("[",2) %>% unlist(),
+                     alpha=mkt_list %>% lapply("[",1) %>% unlist(),
+                     gene=dafs %>% gsub(pattern=".daf",replace=""),
+                     stringsAsFactors = FALSE) %>%
+  subset(!is.na(p))
+
+
+# FWW correction
+p_vals_FWW <- data.frame(gene=dafs %>% gsub(pattern=".daf",replace=""),
+                         p=FWW_list %>% lapply(getP) %>% unlist(),
+                         alpha=FWW_list %>% lapply(getA) %>% unlist(),
+                         dN=FWW_list %>% lapply(getdN) %>% unlist(),
+                         dS=FWW_list %>% lapply(getdS) %>% unlist(),
+                         pN=FWW_list %>% lapply(getpN) %>% unlist(),
+                         pS=FWW_list %>% lapply(getpS) %>% unlist(),
+                         stringsAsFactors = FALSE) %>%
+  subset(!is.na(p))
+
+p_vals_FWW$X <- NULL
+
+# FDR for multiple tests
+p_vals_FWW$p.adj <- p.adjust(p_vals_FWW$p, method = "fdr")
+
+p_vals_FWW$sum_dNdS <- (p_vals_FWW$dN + p_vals_FWW$dS)
+p_vals_FWW$sum_dNpN <- (p_vals_FWW$dN + p_vals_FWW$pN)
+p_vals_FWW$sum_dSpN <- (p_vals_FWW$dS + p_vals_FWW$pN)
+p_vals_FWW$sum_dSpS <- (p_vals_FWW$dS + p_vals_FWW$pS)
+
+p_vals_FWW$DoS <- ((p_vals_FWW$dN/(p_vals_FWW$dN + p_vals_FWW$dS)) -
+                     (p_vals_FWW$pN/(p_vals_FWW$pN + p_vals_FWW$pS)))
+
+# exclude columns/rows with less than 5
+p_vals_FWW_sub <- subset(p_vals_FWW, p_vals_FWW[,9]>5)
+p_vals_FWW_sub <- subset(p_vals_FWW_sub, p_vals_FWW_sub[,10]>5)
+p_vals_FWW_sub <- subset(p_vals_FWW_sub, p_vals_FWW_sub[,11]>5)
+p_vals_FWW_sub <- subset(p_vals_FWW_sub, p_vals_FWW_sub[,12]>5)
+
+
+## output before subsetting row/column sums for 5 or more
+write.csv(p_vals_FWW, "p_vals_FWW_update.csv")
+
+## after subsetting
+write.csv(p_vals_FWW_sub, "p_vals_FWW_sub_update.csv")
+
+
 
 
