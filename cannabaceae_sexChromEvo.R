@@ -23,7 +23,6 @@ coverage_data_Ymers_cannabis.GR <- toGRanges(data.frame(chr=coverage_data_Ymers_
 
 
 ## adjust plot parameters
-
 pp <- getDefaultPlotParams(plot.type = 1)
 pp$ideogramheight <- 100
 pp$data2height <- 0
@@ -33,7 +32,6 @@ pp$data2outmargin <- 0
 
 
 ## generate plot
-
 pdf("figure_output/YmerCov_SexChroms_plot.pdf")
 
 kp <- plotKaryotype(sex_chroms.GR, pin=8, plot.type = 1, labels.plotter = NULL, plot.params = pp)
@@ -49,12 +47,14 @@ kp <-kpHeatmap(kp, data=coverage_data_Ymers_cannabis.GR, data.panel = "ideogram"
 
 dev.off()
 
+
+
 ##### Figure 1b, GENESPACE gene/repeat/synteny #####
 ## analysis by John Lovell
 
 
-##### Figure 1c, GENESPACE gene/repeat/synteny for Cannabis Otto II #####
 
+##### Figure 1c, GENESPACE gene/repeat/synteny for Cannabis Otto II XYs #####
 
 library("GENESPACE")
 #v1.3.1
@@ -87,8 +87,7 @@ test <- plot_2genomes(
 
 
 
-##### Figure 1d, GENESPACE gene/repeat/synteny for Humulus 21110M #####
-
+##### Figure 1d, GENESPACE gene/repeat/synteny for Humulus 21110M XYs #####
 
 library("GENESPACE")
 #v1.3.1
@@ -210,9 +209,10 @@ ripDat <- plot_riparian(gpar, refGenome = "Humulus_lupulus_HAP2",
 dev.off()
 
 
+
 ##### Figure 2b, synteny between hops, Ks of gametologs #####
 
-### GENESPACE between hop and hemp
+### GENESPACE between hop and hemp Xs
 
 library("GENESPACE")
 #v1.3.1
@@ -258,9 +258,7 @@ coverage_data_Ks.GR <- toGRanges(data.frame(chr=coverage_data_Ks$Chromosome,
                                                     start=coverage_data_Ks$Start, end=coverage_data_Ks$Stop))
 
 pp <- getDefaultPlotParams(plot.type = 1)
-#pp$data2height <- 0
 pp$data1outmargin <- 100
-#pp$data2outmargin <- 0
 
 
 pdf("figure_output/Ks_plot.pdf")
@@ -280,13 +278,13 @@ kpAxis(kp, ymax=kp$latest.plot$computed.values$max.density, cex=0.75, numticks=3
 dev.off()
 
 
-##### Figure 2c, synteny between hops, Ks of gametologs #####
+
+##### Figure 2c, phylogeny #####
 ## analysis by Phil Bentz
 
 
 
 ##### Figure 3a, repeat Kimura substitution plots #####
-
 
 library("ggplot2")
 #v3.5.2
@@ -361,8 +359,6 @@ KimuraDistance_NeX_combined <- as.data.frame(cbind(KimuraDistance_NeX$Div,
 colnames(KimuraDistance_NeX_combined) <- c("Div", "Ty-3", "Ty-1", "Other repeat")
 
 
-
-
 #add the genome size in bp
 #lupulus Y
 genomes_size_LuY=168676604
@@ -393,9 +389,7 @@ kd_melt_NeY$time = ((kd_melt_NeY$Div/100)/(2 * 1e-9)/1e6)
 kd_melt_NeX$time = ((kd_melt_NeX$Div/100)/(2 * 1e-9)/1e6)
 
 
-
 ### make the plots
-
 dup_labels <- function(x) {kd_melt_LuY$time[match(x, kd_melt_LuY$Div)]}
 
 LuY <- ggplot(kd_melt_LuY, aes(fill=variable, y=norm, x=Div)) + 
@@ -602,9 +596,7 @@ dev.off()
 
 
 
-
-##### Figure 4, female vs monoecious analyses #####
-
+##### Figure 4, female vs monoecious/male analyses #####
 
 library(karyoploteR)
 #v1.32.0
@@ -642,7 +634,7 @@ pp$ideogramlateralmargin <- 0.01
 pp$leftmargin <- 0.1
 
 
-#### panel a
+#### panel a (genome wide)
 
 pdf("figure_output/Fst_Khufu_FstMonoecy_AllChroms_plot.pdf", width = 7.5, height = 3.5)
 
@@ -672,7 +664,7 @@ dev.off()
 
 
 
-#### panel b
+#### panel b (monoecy locus)
 
 pdf("figure_output/Fst_Khufu_FstMonoecy_ChrX_plot.pdf", width = 7.5, height = 3.5)
 
@@ -685,8 +677,6 @@ kpAddBaseNumbers(kp, tick.dist = 1000000, tick.len = 5, tick.col="black", cex=0.
                  minor.tick.dist = 5000000, minor.tick.len = 5, minor.tick.col = "black", add.units = F)
 
 kpRect(kp, chr="ChrX", x0=77637719, x1=81741939, y0=0, y1=1, col="gray90", data.panel=1, border=NA)
-
-#kpRect(kp, chr="ChrX", x0=79228107, x1=81743844, y0=0, y1=1, col="gray50", data.panel=1, border=NA)
 
 
 markers_X <- data.frame(chr=rep("ChrX", 9), 
@@ -728,17 +718,12 @@ kp <-kpLines(kp, data=coverage_data_Fst.GR, data.panel = 1,
              col= "black", 
              ymin=0,ymax=0.5, lwd=2)
 
-#fc.ymax <- ceiling(max(abs(range(sign.genes$log2FoldChange))))
-#fc.ymin <- -fc.ymax
-
 col.over <- "#008656"
 col.under <-"#FFC520"
 
 
 sign.col <- rep(col.over, 3642)
 sign.col[sign.genes$log2FoldChange<0] <- col.under
-#cex.val <- sqrt(sign.genes$`-log10(filtered.dm.genes$padj)`)/2
-#points.top <- 0.8
 
 kpPoints(kp, chr= sign.genes$Chromosome, x = sign.genes$Start, 
          y=sign.genes$log2FoldChange, ymax=15, ymin=-15, 
@@ -752,177 +737,7 @@ dev.off()
 ################# SUPPLEMENTAL FIGURES #################
 
 
-
-#### Change points ####
-
-library("mcp") 
-#v0.3.4
-library("rjags")
-#v4-17
-library("PMCMRplus")
-#v1.9.12
-library("ggplot2")
-#v3.5.2
-
-Ks <- read.csv("figure_data/lupulus_otto_Ks.csv", header=TRUE)
-Ks_hemp <- subset(Ks, Chromosome == "otto_ChrX")
-#Ks_hemp_SDR <- subset(Ks_hemp, Compartment == "SDR")
-Ks_hop <- subset(Ks, Chromosome == "lupulus_ChrX")
-#Ks_hop_SDR <- subset(Ks_hop, Compartment == "SDR")
-
-
-## changepoint using Otto II
-Ks_hemp_df <- as.data.frame(Ks_hemp$Start)
-Ks_hemp_df <- as.data.frame(cbind(Ks_hemp_df,Ks_hemp$Ks))
-colnames(Ks_hemp_df) <- c("x", "y")
-
-## checking for outliers
-out_hemp <- gesdTest(Ks_hemp_df$y, maxr=20)
-summary(out_hemp)
-boxplot(Ks_hemp_df$y)
-
-## removing significant outliers
-Ks_hemp_df <- Ks_hemp_df[-119,]
-
-#one change (two plateaus)
-model = list(y ~ 1, ~ 1)
-
-#two changes (three plateaus)
-model = list(y ~ 1, ~ 1, ~ 1)
-
-#three changes (four plateaus)
-model = list(y ~ 1, ~ 1, ~ 1, ~ 1)
-
-fit_hemp = mcp(model, Ks_hemp_df, par_x = "x", sample = "both", iter = 10000, adapt=10000, chains = 3)
-
-png("figure_output/cannabis_changepoint_Ks_3.png", width = 8, height = 4, units = 'in', res = 500)
-plot(fit_hemp , q_fit = TRUE, lines=50) + ggtitle("Posterior fit") + 
-  xlab("Position (Mb)") + ylab("Ks") +
-  scale_x_continuous(labels = function(x)x/1000000, n.breaks = 20)
-dev.off()
-
-out_hemp <- summary(fit_hemp)
-write.csv(out_hemp, "cannabis_changepoint_Ks.csv")
-
-## changepoint using hops
-Ks_hop_df <- as.data.frame(Ks_hop$Start)
-Ks_hop_df <- as.data.frame(cbind(Ks_hop_df,Ks_hop$Ks))
-colnames(Ks_hop_df) <- c("x", "y")
-
-## checking for outliers
-out_hop <- gesdTest(Ks_hop_df$y, maxr=5)
-summary(out_hop)
-boxplot(Ks_hop_df$y)
-
-#model = list(y ~ 1)
-model = list(y ~ 1, ~ 1)
-model = list(y ~ 1, ~ 1, ~ 1, ~ 1)
-
-fit_hop = mcp(model, Ks_hop_df, par_x = "x", sample = "both", iter = 10000, adapt=10000, chains = 3)
-
-png("figure_output/hop_changepoint_Ks_3.png", width = 8, height = 4, units = 'in', res = 500)
-plot(fit_hop , q_fit = TRUE, lines=50) + ggtitle("Posterior fit") + 
-  xlab("Position (Mb)") + ylab("Ks") +
-  scale_x_continuous(labels = function(x)x/1000000, n.breaks = 20)
-dev.off()
-
-
-out_hop <- summary(fit_hop)
-write.csv(out_hop, "cannabis_changepoint_Ks.csv")
-
-
-##### gene expression heatmap #####
-
-library("DESeq2")
-#v1.46.0
-library("pheatmap")
-#v1.10.12
-library("ggplot2")
-#v3.5.2
-
-
-countData <- as.matrix(read.csv("figure_data/heatmap_gene_count_matrix.csv", row.names = "gene_id"))
-colData <- read.csv("figure_data/heatmap_pheno.csv", sep=",", header=TRUE) 
-
-
-dds <- DESeqDataSetFromMatrix(countData=countData, colData=colData, design=~Sex+Tissue)
-dds <- DESeq(dds)
-
-ntd <- normTransform(dds)
-
-## ACS/ETR/ACOs/REM/KAN
-select <- c("OIIb.chrX.v1.g435690",
-            "OIIb.chr4.v1.g213660",
-            "OIIb.chr5.v1.g223160",
-            "OIIb.chr1.v1.g077020",  
-            "OIIb.chr1.v1.g091300",
-            "OIIb.chr5.v1.g252740",
-            "OIIb.chr3.v1.g172660",
-            "OIIb.chr5.v1.g246710",
-            "OIIb.chrX.v1.g440030",
-            "OIIb.chr7.v1.g309190",
-            "OIIb.chrX.v1.g435640",
-            "OIIb.chr1.v1.g077290",
-            "OIIb.chr1.v1.g100060", 
-            "OIIb.chr8.v1.g343400",
-            "OIIb.chrX.v1.g436840",
-            "OIIb.chrX.v1.g436820",
-            "OIIb.chrX.v1.g436780")
-
-
-df <- as.data.frame(colData(dds)[,c("Sex","Tissue")])
-rownames(df) <- colnames(dds)
-colnames(df) <- c("Sex","Tissue")
-
-pheatmap(assay(ntd)[select,], cluster_rows=TRUE, show_rownames=TRUE,
-         cluster_cols=TRUE, annotation_col=df, cex=0.75)
-
-df <- as.data.frame(colData(dds)[,c("Sex","Tissue")])
-rownames(df) <- colnames(dds)
-colnames(df) <- c("Sex","Tissue")
-
-heatmap <- pheatmap(assay(ntd)[select,], cluster_rows=TRUE, show_rownames=TRUE,
-         cluster_cols=TRUE, annotation_col=df, cex=0.75)
-
-
-ggsave(heatmap, filename = "figure_output/heatmap.pdf", device = pdf, dpi = 300,
-       width = 12, height = 6, units = "in")
-
-
-##### Khufu Y chromosome test #####
-
-## panel a by Zack Myers
-
-## panel b
-
-library("ggplot2")
-#v3.5.2
-
-isolate_sex <- read.csv("Figure_data/hemp_NWG_Khufu_sdrCov.csv", header=TRUE)
-
-isolate_sex$Isolate <- factor(isolate_sex$Genotype, 
-                              levels = isolate_sex$Genotype[order(isolate_sex$ChrY_cov, 
-                                                                  decreasing = TRUE)])
-p <- ggplot(isolate_sex, aes(x=Genotype, y=ChrY_cov)) + 
-  geom_point(alpha=0.75, size=3,(aes(col=Sex, shape=Sex))) +
-  xlab("Isolate") +
-  ylab("Coverage") +
-  theme(axis.title.x = element_text(size=10)) +
-  theme(axis.title.y = element_text(size=10))+
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=5),
-        axis.text.y = element_text(size=15)) +
-  theme(plot.margin=unit(c(1,1,1,1),"cm")) + 
-  theme(panel.background = element_rect(color="black")) + 
-  theme(axis.text.x=element_blank())
-p
-
-ggsave("figure_output/hemp_isolate_SDR_cov.png", p, units="in", width=8, height=4, dpi=300,
-       device="png")
-
-
-
-
-######## Figs. S3-4, contig maps #########
+######## Figs. S3-4, contig maps and telomere check #########
 
 library("GENESPACE")
 #v1.3.1
@@ -1007,9 +822,8 @@ p1 <- plot_contigs(
 dev.off()
 
 
-######## Fig. S6, example gene trees #########
 
-#install.packages("ggtree")
+######## Fig. S5, example gene trees #########
 
 library("ggtree")
 #v3.14.0
@@ -1107,6 +921,79 @@ tree_plot
 ggsave("figure_output/Canna_PARExample.png", tree_plot, units="in", width=6, height=6, dpi=500,
        device="png")
 
+#### Fig. S7, Change points ####
+
+library("mcp") 
+#v0.3.4
+library("rjags")
+#v4-17
+library("PMCMRplus")
+#v1.9.12
+library("ggplot2")
+#v3.5.2
+
+Ks <- read.csv("figure_data/lupulus_otto_Ks.csv", header=TRUE)
+Ks_hemp <- subset(Ks, Chromosome == "otto_ChrX")
+Ks_hop <- subset(Ks, Chromosome == "lupulus_ChrX")
+
+
+## changepoint using Otto II
+Ks_hemp_df <- as.data.frame(Ks_hemp$Start)
+Ks_hemp_df <- as.data.frame(cbind(Ks_hemp_df,Ks_hemp$Ks))
+colnames(Ks_hemp_df) <- c("x", "y")
+
+## checking for outliers
+out_hemp <- gesdTest(Ks_hemp_df$y, maxr=20)
+summary(out_hemp)
+boxplot(Ks_hemp_df$y)
+
+## removing significant outliers
+Ks_hemp_df <- Ks_hemp_df[-119,]
+
+#one change (two plateaus)
+model = list(y ~ 1, ~ 1)
+
+#two changes (three plateaus)
+model = list(y ~ 1, ~ 1, ~ 1)
+
+#three changes (four plateaus)
+model = list(y ~ 1, ~ 1, ~ 1, ~ 1)
+
+fit_hemp = mcp(model, Ks_hemp_df, par_x = "x", sample = "both", iter = 10000, adapt=10000, chains = 3)
+
+png("figure_output/cannabis_changepoint_Ks_3.png", width = 8, height = 4, units = 'in', res = 500)
+plot(fit_hemp , q_fit = TRUE, lines=50) + ggtitle("Posterior fit") + 
+  xlab("Position (Mb)") + ylab("Ks") +
+  scale_x_continuous(labels = function(x)x/1000000, n.breaks = 20)
+dev.off()
+
+out_hemp <- summary(fit_hemp)
+write.csv(out_hemp, "cannabis_changepoint_Ks.csv")
+
+## changepoint using hops
+Ks_hop_df <- as.data.frame(Ks_hop$Start)
+Ks_hop_df <- as.data.frame(cbind(Ks_hop_df,Ks_hop$Ks))
+colnames(Ks_hop_df) <- c("x", "y")
+
+## checking for outliers
+out_hop <- gesdTest(Ks_hop_df$y, maxr=5)
+summary(out_hop)
+boxplot(Ks_hop_df$y)
+
+model = list(y ~ 1, ~ 1)
+
+fit_hop = mcp(model, Ks_hop_df, par_x = "x", sample = "both", iter = 10000, adapt=10000, chains = 3)
+
+png("figure_output/hop_changepoint_Ks_3.png", width = 8, height = 4, units = 'in', res = 500)
+plot(fit_hop , q_fit = TRUE, lines=50) + ggtitle("Posterior fit") + 
+  xlab("Position (Mb)") + ylab("Ks") +
+  scale_x_continuous(labels = function(x)x/1000000, n.breaks = 20)
+dev.off()
+
+
+out_hop <- summary(fit_hop)
+write.csv(out_hop, "cannabis_changepoint_Ks.csv")
+
 
 
 ######## Fig. S8, FT, FD, ACO, and ACS gene trees #########
@@ -1196,7 +1083,6 @@ ggsave("figure_output/ACO_tree.png", tree_plot, units="in", width=6, height=8, d
        device="png")
 
 
-
 ### ACS, 836
 
 tree_file <- read.tree("figure_data/RAxML_bipartitions.OG0000836.tree")
@@ -1220,6 +1106,96 @@ tree_plot <- collapse(tree_plot, node=319) +
 tree_plot
 
 ggsave("figure_output/ACS_tree.png", tree_plot, units="in", width=6, height=8, dpi=500,
+       device="png")
+
+
+##### Fig. S10, gene expression heatmap #####
+
+library("DESeq2")
+#v1.46.0
+library("pheatmap")
+#v1.10.12
+library("ggplot2")
+#v3.5.2
+
+
+countData <- as.matrix(read.csv("figure_data/heatmap_gene_count_matrix.csv", row.names = "gene_id"))
+colData <- read.csv("figure_data/heatmap_pheno.csv", sep=",", header=TRUE) 
+
+
+dds <- DESeqDataSetFromMatrix(countData=countData, colData=colData, design=~Sex+Tissue)
+dds <- DESeq(dds)
+
+ntd <- normTransform(dds)
+
+## ACS/ETR/ACOs/REM/KAN
+select <- c("OIIb.chrX.v1.g435690",
+            "OIIb.chr4.v1.g213660",
+            "OIIb.chr5.v1.g223160",
+            "OIIb.chr1.v1.g077020",  
+            "OIIb.chr1.v1.g091300",
+            "OIIb.chr5.v1.g252740",
+            "OIIb.chr3.v1.g172660",
+            "OIIb.chr5.v1.g246710",
+            "OIIb.chrX.v1.g440030",
+            "OIIb.chr7.v1.g309190",
+            "OIIb.chrX.v1.g435640",
+            "OIIb.chr1.v1.g077290",
+            "OIIb.chr1.v1.g100060", 
+            "OIIb.chr8.v1.g343400",
+            "OIIb.chrX.v1.g436840",
+            "OIIb.chrX.v1.g436820",
+            "OIIb.chrX.v1.g436780")
+
+
+df <- as.data.frame(colData(dds)[,c("Sex","Tissue")])
+rownames(df) <- colnames(dds)
+colnames(df) <- c("Sex","Tissue")
+
+pheatmap(assay(ntd)[select,], cluster_rows=TRUE, show_rownames=TRUE,
+         cluster_cols=TRUE, annotation_col=df, cex=0.75)
+
+df <- as.data.frame(colData(dds)[,c("Sex","Tissue")])
+rownames(df) <- colnames(dds)
+colnames(df) <- c("Sex","Tissue")
+
+heatmap <- pheatmap(assay(ntd)[select,], cluster_rows=TRUE, show_rownames=TRUE,
+                    cluster_cols=TRUE, annotation_col=df, cex=0.75)
+
+
+ggsave(heatmap, filename = "figure_output/heatmap.pdf", device = pdf, dpi = 300,
+       width = 12, height = 6, units = "in")
+
+
+##### Fig. S11, Khufu data #####
+
+## panel a (depth vs coverage) 
+## analysis by Zack Myers
+
+## panel b (check for presence of the Y chromosome)
+
+library("ggplot2")
+#v3.5.2
+
+isolate_sex <- read.csv("Figure_data/hemp_NWG_Khufu_sdrCov.csv", header=TRUE)
+
+isolate_sex$Isolate <- factor(isolate_sex$Genotype, 
+                              levels = isolate_sex$Genotype[order(isolate_sex$ChrY_cov, 
+                                                                  decreasing = TRUE)])
+p <- ggplot(isolate_sex, aes(x=Genotype, y=ChrY_cov)) + 
+  geom_point(alpha=0.75, size=3,(aes(col=Sex, shape=Sex))) +
+  xlab("Isolate") +
+  ylab("Coverage") +
+  theme(axis.title.x = element_text(size=10)) +
+  theme(axis.title.y = element_text(size=10))+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size=5),
+        axis.text.y = element_text(size=15)) +
+  theme(plot.margin=unit(c(1,1,1,1),"cm")) + 
+  theme(panel.background = element_rect(color="black")) + 
+  theme(axis.text.x=element_blank())
+p
+
+ggsave("figure_output/hemp_isolate_SDR_cov.png", p, units="in", width=8, height=4, dpi=300,
        device="png")
 
 
