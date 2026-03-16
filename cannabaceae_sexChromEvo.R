@@ -1028,7 +1028,7 @@ ggsave("figure_output/FT_tree_expanded.png", tree_plot, units="in", width=6, hei
        device="png")
 
 
-### FD, 1983
+### FD, 1913
 
 tree_file <- read.tree("figure_data/RAxML_bipartitions.OG0001913.tree")
 
