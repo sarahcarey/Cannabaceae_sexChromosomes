@@ -489,6 +489,7 @@ paml_result_hops <- subset(paml_result, paml_result$species=="hop")
 
 pairwise.wilcox.test(paml_result_cannabis$dN.dS,paml_result_cannabis$bin_adv,
                      p.adjust.method = "BH")
+
 #Autosomal      HXR    
 #HXR 8.3e-08     -      
 #PAR 0.05       8.2e-08
@@ -518,12 +519,11 @@ p <- ggplot(paml_result, aes(x=species, y=dN.dS)) +
   geom_signif(
     y_position = c(2.5, 2.75, 3, 2.5, 2.75, 2.9), xmin = c(0.75, 1, 0.75, 1.75, 2, 1.75), 
     xmax = c(1, 1.25, 1.25, 2, 2.25, 2.25),
-    annotation = c("***", "***", "*", "***", "*", "ns"), tip_length = 0.005, textsize = 3, size = 1)
+    annotation = c("****", "****", "*", "**", "*", "ns"), tip_length = 0.005, textsize = 3, size = 1)
 p
 
 ggsave(p, filename = "figure_output/fasterX.pdf", device = pdf, dpi = 300,
        width = 4, height = 3.5, units = "in")
-
 
 
 ##### Figure 3c, Fst outliers, chemotypes #####
@@ -594,7 +594,7 @@ kp <-kpLines(kp, data=coverage_data_Fst.GR, data.panel = 1,
 
 dev.off()
 
-
+sum(!is.na(paml_result_cannabis$bin_adv))
 
 ##### Figure 4, female vs monoecious/male analyses #####
 
@@ -884,8 +884,8 @@ tree_plot <- collapse(tree_plot, node=66) +
   geom_point2(aes(subset=(node==66)), shape=23, size=5, fill="black")
 
 tree_plot <- rotate(tree_plot, node=109)
+tree_plot <- rotate(tree_plot, node=110)
 tree_plot <- rotate(tree_plot, node=120)
-
 
 tree_plot
 
@@ -915,6 +915,8 @@ tree_plot <- ggtree(tree_file, branch.length = "none",
 
 tree_plot <- collapse(tree_plot, node=70) + 
   geom_point2(aes(subset=(node==70)), shape=23, size=5, fill="black")
+
+tree_plot <- rotate(tree_plot, node=117)
 
 tree_plot
 
@@ -998,6 +1000,12 @@ write.csv(out_hop, "cannabis_changepoint_Ks.csv")
 
 ######## Fig. S8, FT, FD, ACO, and ACS gene trees #########
 
+library("ggtree")
+#v3.14.0
+
+### FT, 684
+
+tree_file <- read.tree("figure_data/RAxML_bipartitions.OG0000684.tree")
 
 #get node labels
 tree_plot <- ggtree(tree_file, color="black", size=1) +
@@ -1006,10 +1014,6 @@ tree_plot <- ggtree(tree_file, color="black", size=1) +
   theme_tree("white")
 tree_plot
 
-### FT, 684
-
-tree_file <- read.tree("figure_data/RAxML_bipartitions.OG0000684.tree")
-
 tree_plot <- ggtree(tree_file, branch.length = "none",
                     size=1, color="gray80") +
   geom_tiplab(size=3.5, color="black") +
@@ -1017,10 +1021,8 @@ tree_plot <- ggtree(tree_file, branch.length = "none",
   theme_tree("white") +
   geom_nodelab(size=3, color="red")
 
-tree_plot <- collapse(tree_plot, node=459) + 
-  geom_point2(aes(subset=(node==459)), shape=23, size=5, fill="black")
-tree_plot <- collapse(tree_plot, node=167) + 
-  geom_point2(aes(subset=(node==167)), shape=23, size=5, fill="black")
+tree_plot <- collapse(tree_plot, node=266) + 
+  geom_point2(aes(subset=(node==266)), shape=23, size=5, fill="black")
 
 tree_plot
 
